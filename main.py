@@ -53,6 +53,7 @@ def trim_sheets_data(last_row: int, rows: int, wksheet: worksheet) -> None:
 
 def truncate_and_reload(wksheet: worksheet, df: DataFrame) -> None:
     logging.info(f'Truncate and reloaded {len(df.index)}')
+    df.fillna("", inplace=True)
     wksheet.set_dataframe(df, "A2", copy_head=False)
 
 
