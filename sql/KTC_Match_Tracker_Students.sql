@@ -19,6 +19,18 @@ Seminar_Courses AS(
         AND s.Schoolyear4digit = custom.fn_SchoolYear4Digit(GETDATE())
         AND s.course_name LIKE '%Seminar%'
         AND s.seq_latestEnrollment = 1
+),
+/* CTE to pull in weighted GPAs */
+Weighted_GPA AS(
+    SELECT
+          gpa.SystemStudentID
+        , gpa.value
+    FROM custom.Fact_GPA gpa
+    WHERE 1=1
+        AND gpa.is_inProgress = 0
+        AND gpa.is_cumulative = 1
+        AND gpa.is_finalMostRecent = 1
+        AND gpa.calculation_method = 'KIPP NorCal Weighted'
 )
 SELECT
       s.SystemStudentID AS PS_Id
@@ -40,6 +52,8 @@ SELECT
     , s.EnrollmentStatus
     , s.SchoolYearEntryDate
     , s.SchoolYearExitDate
+    , s.Standardized_PrimaryDisability AS IEP_Status
+    , g.value AS Weighted_GPA
 FROM dw.DW_dimStudent s
 LEFT JOIN custom.KTC_Contact c
     ON s.SystemStudentID = c.School_SIS_ID__c
@@ -49,8 +63,11 @@ LEFT JOIN Advisory_Courses adv
     ON s.SystemStudentID = adv.student_number
 LEFT JOIN Seminar_Courses sem
     ON s.SystemStudentID = sem.student_number
+LEFT JOIN Weighted_GPA g
+    ON g.SystemStudentID = s.SystemStudentID
 WHERE 1=1
     AND s.GradeLevel_Numeric IN (11,12)
-    AND s.SchoolYearEntryDate > '08-06-22' -- Update each school year
+    -- Update this date once the 8/1/22 issue is resolved!
+    AND s.SchoolYearEntryDate > '07-31-22' -- Update each school year
     AND s.SchoolYearEntryDate <> s.SchoolYearExitDate -- Exclude no shows
 ORDER BY s.SchoolName_MostRecent, s.LastName OFFSET 0 ROWS
