@@ -25,7 +25,7 @@ def fetch_worksheet() -> worksheet:
     logging.info('Accessing Googlesheets Data')
     client = authorize(service_file='./service_account_cred.json')
     sheet = client.open_by_key(getenv('SHEET_KEY'))
-    wksheet = sheet.worksheet_by_title('All Students - Test')
+    wksheet = sheet.worksheet_by_title('All Students')
     return wksheet
 
 
