@@ -68,6 +68,6 @@ LEFT JOIN Weighted_GPA g
 WHERE 1=1
     AND s.GradeLevel_Numeric IN (11,12)
     -- Update this date once the 8/1/22 issue is resolved!
-    AND s.SchoolYearEntryDate > '07-31-22' -- Update each school year
+    AND s.SchoolYearEntryDate > '08-01-22' -- Update each school year
     AND s.SchoolYearEntryDate <> s.SchoolYearExitDate -- Exclude no shows
 ORDER BY s.SchoolName_MostRecent, s.LastName OFFSET 0 ROWS
