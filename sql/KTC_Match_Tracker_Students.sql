@@ -6,7 +6,7 @@ WITH Advisory_Courses AS(
     FROM custom.vw_Enrollment_course_section_PS a
     WHERE 1=1
         AND a.Schoolyear4digit = custom.fn_SchoolYear4Digit(GETDATE())
-        AND a.course_name LIKE '%Advisory%'
+        AND (a.course_name LIKE '%Advisory%' or a.course_name LIKE '%Pride%')
         AND a.seq_latestEnrollment = 1
 ),
 /* CTE to identify which period the Seminar course is for a student */
@@ -38,9 +38,15 @@ SELECT
     , s.LastName
     , s.FirstName
     , LEFT(sem.Seminar_Period,1) AS Seminar_Period
-    , s.Standardized_PrimaryEthnicity AS Ethnicity
+    , CASE
+            WHEN s.Standardized_PrimaryEthnicity ='Hispanic' THEN 'LatinX'
+            ELSE s.Standardized_PrimaryEthnicity
+      END AS Ethnicity
     , s.Standardized_Gender AS Gender
-    , s.Standardized_PrimaryEthnicity + ' - ' + s.Standardized_Gender AS Ethnicity_and_Gender
+    , CASE
+            WHEN s.Standardized_PrimaryEthnicity ='Hispanic' THEN 'LatinX - ' + s.Standardized_Gender
+            ELSE s.Standardized_PrimaryEthnicity + ' - ' + s.Standardized_Gender
+      END AS Ethnicity_and_Gender
     , s.Standardized_LunchStatus AS FRL_Status
     , '' AS Counselor -- Don't pull this in until updated in ADB con.Name AS Counselor
     , adv.Advisor
@@ -67,7 +73,6 @@ LEFT JOIN Weighted_GPA g
     ON g.SystemStudentID = s.SystemStudentID
 WHERE 1=1
     AND s.GradeLevel_Numeric IN (11,12)
-    -- Update this date once the 8/1/22 issue is resolved!
     AND s.SchoolYearEntryDate > '08-01-22' -- Update each school year
     AND s.SchoolYearEntryDate <> s.SchoolYearExitDate -- Exclude no shows
 ORDER BY s.SchoolName_MostRecent, s.LastName OFFSET 0 ROWS
