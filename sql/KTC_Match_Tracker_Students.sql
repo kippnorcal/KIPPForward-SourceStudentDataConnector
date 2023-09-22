@@ -73,6 +73,7 @@ LEFT JOIN Weighted_GPA g
     ON g.SystemStudentID = s.SystemStudentID
 WHERE 1=1
     AND s.GradeLevel_Numeric IN (11,12)
-    AND s.SchoolYearEntryDate > '08-01-22' -- Update each school year
+    AND s.SchoolYearEntryDate > '08-01-23' -- Update each school year
     AND s.SchoolYearEntryDate <> s.SchoolYearExitDate -- Exclude no shows
+    AND c.IsDeleted = 0
 ORDER BY s.SchoolName_MostRecent, s.LastName OFFSET 0 ROWS
