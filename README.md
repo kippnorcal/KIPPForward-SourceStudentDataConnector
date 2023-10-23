@@ -1,11 +1,5 @@
 # KIPPForward-SourceStudentDataConnector
 
-## Dependencies:
-
-- Python3.7
-- [Pipenv](https://pipenv.readthedocs.io/en/latest/)
-- [Docker](https://www.docker.com/)
-
 ## Getting Started
 
 ### Setup Environment
